@@ -2,16 +2,43 @@ import {
   BaseEntity,
   Column,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Ward } from '../ward/ward.entity';
 
 @Entity()
-@Unique(['username'])
+@Unique(['email', 'phone', 'identification', 'username'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  phone: string;
+
+  @Column()
+  identification: string;
+
+  @Column({ nullable: true })
+  avatar: string;
+
+  @Column({ nullable: true })
+  fcmToken: string;
+
+  @Column({ nullable: true })
+  @ManyToOne(() => Ward, (ward) => ward.id)
+  ward: number;
 
   @Column()
   username: string;
