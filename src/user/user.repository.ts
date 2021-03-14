@@ -17,6 +17,7 @@ export class UserRepository extends Repository<User> {
       email,
       phone,
       identification,
+      role,
       username,
       password,
     } = crateUserDto;
@@ -27,6 +28,7 @@ export class UserRepository extends Repository<User> {
     user.email = email;
     user.phone = phone;
     user.identification = identification;
+    user.role = role;
     user.username = username;
     user.salt = await bcrypt.genSalt();
     user.password = await UserRepository.hashPassword(password, user.salt);

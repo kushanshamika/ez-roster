@@ -1,4 +1,11 @@
-import { IsEmail, IsMobilePhone, IsNotEmpty, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsMobilePhone,
+  IsNotEmpty,
+  Matches,
+} from 'class-validator';
+import { UserRoles } from '../user-roles.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -18,6 +25,9 @@ export class CreateUserDto {
     { message: 'invalid nic number' },
   )
   identification: string;
+
+  @IsEnum(UserRoles)
+  role: UserRoles;
 
   @IsEmail()
   username: string;

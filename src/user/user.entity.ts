@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Ward } from '../ward/ward.entity';
+import { UserRoles } from './user-roles.enum';
 
 @Entity()
 @Unique(['email', 'phone', 'identification', 'username'])
@@ -29,6 +30,9 @@ export class User extends BaseEntity {
 
   @Column()
   identification: string;
+
+  @Column()
+  role: UserRoles;
 
   @Column({ nullable: true })
   avatar: string;
