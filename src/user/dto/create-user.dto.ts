@@ -20,10 +20,7 @@ export class CreateUserDto {
   @IsMobilePhone()
   phone: string;
 
-  @Matches(
-    /^(?:19|20)?\d{2}(?:[0-35-8]\d\d(?<!(?:000|500|36[7-9]|3[7-9]\d|86[7-9]|8[7-9]\d)))\d{4}(?:[vVxX])$/,
-    { message: 'invalid nic number' },
-  )
+  @Matches(/^([0-9]{9}[x|X|v|V]|[0-9]{12})$/, { message: 'invalid nic number' })
   identification: string;
 
   @IsEnum(UserRoles)
