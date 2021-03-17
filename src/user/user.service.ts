@@ -3,6 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
+import { UpdateResult } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -21,5 +23,9 @@ export class UserService {
     if (result.affected === 0) {
       throw new NotFoundException();
     }
+  }
+
+  async updateUser(id: number, user: UpdateUserDto): Promise<UpdateResult> {
+    return this.userRepository.updateUser(id, user);
   }
 }

@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import {
@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -67,5 +68,22 @@ export class UserRepository extends Repository<User> {
     salt: string,
   ): Promise<string> {
     return bcrypt.hash(password, salt);
+  }
+
+  async updateUser(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    const updated_user = await this.createQueryBuilder()
+      .update('user')
+      .set(updateUserDto)
+      .where('id = :id', { id: id })
+      .returning('*')
+      .execute();
+
+    updated_user.raw[0].password = undefined;
+    updated_user.raw[0].salt = undefined;
+
+    return updated_user.raw[0];
   }
 }
