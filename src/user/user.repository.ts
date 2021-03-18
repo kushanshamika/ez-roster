@@ -3,11 +3,15 @@ import { User } from './user.entity';
 import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import {
   ConflictException,
+  ForbiddenException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -61,6 +65,42 @@ export class UserRepository extends Repository<User> {
     } else {
       return null;
     }
+  }
+
+  async changePassword(
+    authUser: User,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
+    const { old_password, new_password } = changePasswordDto;
+
+    if (await authUser.validatePassword(old_password)) {
+      authUser.salt = await bcrypt.genSalt();
+      authUser.password = await UserRepository.hashPassword(
+        new_password,
+        authUser.salt,
+      );
+
+      await authUser.save();
+    } else {
+      throw new ForbiddenException('incorrect old password');
+    }
+  }
+
+  async resetPassword(
+    id: number,
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    const user = await this.findOne({ id });
+    const { password } = resetPasswordDto;
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    user.salt = await bcrypt.genSalt();
+    user.password = await UserRepository.hashPassword(password, user.salt);
+
+    await user.save();
   }
 
   private static async hashPassword(

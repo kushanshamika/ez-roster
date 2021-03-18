@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class UserService {
@@ -27,5 +29,19 @@ export class UserService {
 
   async updateUser(id: number, user: UpdateUserDto): Promise<UpdateResult> {
     return this.userRepository.updateUser(id, user);
+  }
+
+  async resetPassword(
+    id: number,
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    return this.userRepository.resetPassword(id, resetPasswordDto);
+  }
+
+  async changePassword(
+    authUser: User,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
+    return this.userRepository.changePassword(authUser, changePasswordDto);
   }
 }
