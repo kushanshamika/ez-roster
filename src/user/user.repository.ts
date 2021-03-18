@@ -1,4 +1,4 @@
-import { EntityRepository, Repository, UpdateResult } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import {
@@ -110,20 +110,45 @@ export class UserRepository extends Repository<User> {
     return bcrypt.hash(password, salt);
   }
 
-  async updateUser(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    const updated_user = await this.createQueryBuilder()
-      .update('user')
-      .set(updateUserDto)
-      .where('id = :id', { id: id })
-      .returning('*')
-      .execute();
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne({ id });
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      identification,
+      role,
+      avatar,
+      fcmToken,
+      ward,
+      username,
+    } = updateUserDto;
 
-    updated_user.raw[0].password = undefined;
-    updated_user.raw[0].salt = undefined;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.phone = phone;
+    user.identification = identification;
+    user.role = role;
+    user.avatar = avatar;
+    user.fcmToken = fcmToken;
+    user.ward = ward;
+    user.username = username;
 
-    return updated_user.raw[0];
+    try {
+      await user.save();
+
+      user.password = undefined;
+      user.salt = undefined;
+
+      return user;
+    } catch (e) {
+      if (e.errorCode === '23505') {
+        throw new ConflictException(e.detail);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 }

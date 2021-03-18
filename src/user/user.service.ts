@@ -27,7 +27,7 @@ export class UserService {
     }
   }
 
-  async updateUser(id: number, user: UpdateUserDto): Promise<UpdateResult> {
+  async updateUser(id: number, user: UpdateUserDto): Promise<User> {
     return this.userRepository.updateUser(id, user);
   }
 

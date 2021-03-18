@@ -62,7 +62,7 @@ export class UserController {
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() user: UpdateUserDto,
-  ): Promise<UpdateResult> {
+  ): Promise<User> {
     return this.userService.updateUser(id, user);
   }
 }
