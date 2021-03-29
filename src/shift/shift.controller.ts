@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -30,5 +33,10 @@ export class ShiftController {
     @Query(ValidationPipe) filterDto: GetShiftFilterDto,
   ): Promise<Shift[]> {
     return this.shiftService.getShifts(filterDto);
+  }
+
+  @Delete('/:id')
+  deleteShiftById(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.shiftService.deleteShiftById(id);
   }
 }

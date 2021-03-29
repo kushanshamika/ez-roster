@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShiftRepository } from './shift.repository';
 import { CreateShiftDto } from './dto/create-shift.dto';
@@ -17,5 +17,13 @@ export class ShiftService {
 
   async getShifts(filterDto: GetShiftFilterDto): Promise<Shift[]> {
     return this.shiftRepository.getWards(filterDto);
+  }
+
+  async deleteShiftById(id: number): Promise<void> {
+    const deletedShift = await this.shiftRepository.delete(id);
+
+    if (deletedShift.affected === 0) {
+      throw new NotFoundException();
+    }
   }
 }
